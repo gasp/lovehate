@@ -9,9 +9,13 @@ db.on('load', function() {
     for (var i = data.statuses.length - 1; i >= 0; i--) {
       var id = data.statuses[i].id;
       if(!db.get(id)) { // deduplicate
-        db.set(id, data.statuses[i]);
+        var cleaned = twitter.clean(data.statuses[i]);
+        if(cleaned) { // false if not interesting
+          db.set(id, cleaned);
+          records++;
+        }
       }
     };
-    console.log("fetched %d tweets", data.statuses.length);
+    console.log("fetched %d tweets, %d saved", data.statuses.length, records);
   });
 });
