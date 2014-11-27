@@ -13,8 +13,16 @@ exports.fetch = function(callback) {
 
 	var T = new Twit(config.twitter.auth);
 
+	// randomly selecting a query
+	var query = Math.floor(Math.random() * config.twitter.queries.length);
+
 	// searching for tweets
-	T.get('search/tweets', { q: config.twitter.query, count: 100 }, function(err, data, response) {
+	T.get('search/tweets', { q: query, count: 100 }, function(err, data, response) {
+		if(err || typeof(data.statuses) === "undefined") {
+			console.log("query result errot");
+			return false;
+		}
+		console.log('queried %s for %d results', query, data.statuses.length);
 		callback(data);
 	});
 	// config.twitter.search_interval * 1000;
