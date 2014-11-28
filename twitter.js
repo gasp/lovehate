@@ -7,22 +7,26 @@ if (JSON.stringify(config.twitter.auth).indexOf("...") > 0) {
 
 var Twit = require('twit');
 
-exports.fetch = function(callback) {
+// fetch "love", function or "hate", function
+exports.fetch = function(feeling, callback) {
 	// NOTE: take care when changing the search_interval variable
 	// the rate limit in Search API v1.1 is 180 requests / 15 minutes, meaning 1 request every 5 seconds
 
 	var T = new Twit(config.twitter.auth);
 
 	// randomly selecting a query
-	var query = Math.floor(Math.random() * config.twitter.queries.length);
+	var r = Math.floor(Math.random() * config.twitter[feeling].length),
+		query = encodeURIComponent(config.twitter[feeling][r]);
+		console.log(query);
 
 	// searching for tweets
 	T.get('search/tweets', { q: query, count: 100 }, function(err, data, response) {
 		if(err || typeof(data.statuses) === "undefined") {
-			console.log("query result errot");
+			console.log("☁ query result error", err, data);
+			console.log(response);
 			return false;
 		}
-		console.log('queried %s for %d results', query, data.statuses.length);
+		console.log('☁ queried %s and found %s for %d results', feeling, query, data.statuses.length);
 		callback(data);
 	});
 	// config.twitter.search_interval * 1000;
