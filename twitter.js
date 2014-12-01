@@ -53,8 +53,16 @@ exports.clean = function(tweet) {
 	if(tweet.lang != 'en')
 		return false;
 
+	// emoji are ugly
+	var stripEmoji = function(text) {
+		return text.split("").map(function(c) {
+			var charCode = c.charCodeAt(0);
+			return (charCode >= 50000) ? '' : c;
+		}).join("");
+	};
+
 	cleaned.id = tweet.id;
-	cleaned.text = tweet.text;
+	cleaned.text = stripEmoji(tweet.text);
 	cleaned.created_at = tweet.created_at;
 	cleaned.user = {
 		id: tweet.user.id,
